@@ -19,6 +19,14 @@ import {
 } from "@/components/ui/tooltip";
 
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -31,9 +39,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { format } from "date-fns";
 import { categoryColors } from "@/data/categories";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronUp, Clock, MoreHorizontal, RefreshCw } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, MoreHorizontal, RefreshCw, Search, Trash, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 const RECURRING_INTERVAL = {
   DAILY: "daily",
@@ -43,6 +52,9 @@ const RECURRING_INTERVAL = {
 };
 
 const TransactionTable = ({ transactions }) => {
+  
+
+  const filteredAndSortedTransaction = transactions;      
   const router = useRouter();
   
   const [SelectIds, setSelectIds] = useState([]); 
@@ -67,16 +79,69 @@ const TransactionTable = ({ transactions }) => {
   }
 
 
-
-  
-
+  //for filters
 
 
-  const filteredAndSortedTransaction = transactions;      
+  const [searchTerm, setsearchTerm] = useState("");
+  const [typeFilter, settypeFilter] = useState("");
+  const [recurringFilter, setrecurringFilter] = useState("");
+
+  const handleBulkDelete =()=>{
+
+  }
+
+  const handleClearFilter =()=>{
+    setsearchTerm("");
+    settypeFilter("");
+    setrecurringFilter("");
+    setSelectIds([]);
+  }
+
 
   return (
     <div>
       {/* Filter */}
+
+      <div className="flex flex-col sm:flex-row gap-4 ">
+        <div className="relative flex-1 ">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
+          <Input className="pl-8" placeholder="Search Transactions..." value={searchTerm} onChange={(e)=>setsearchTerm(e.target.value)} />
+        </div>
+
+    <Select value={typeFilter} onValueChange={value=>settypeFilter(value)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="All Types" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="INCOME">Income</SelectItem>
+          <SelectItem value="EXPENSE">Expense</SelectItem>
+        </SelectContent>
+    </Select>
+
+
+  <Select value={recurringFilter} onValueChange={value=>setrecurringFilter(value)}>
+    <SelectTrigger className="w-[180px]">
+      <SelectValue placeholder="All Transactions" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="recurring">Recurring Only</SelectItem>
+      <SelectItem value="non-recurring">Non Recurring Only</SelectItem>
+    </SelectContent>
+  </Select>
+
+
+  {SelectIds.length>0 && (
+    <div>
+      <Button variant="destructive"  onClick={handleBulkDelete}><Trash/> Delete Selected ({SelectIds.length}) </Button>
+    </div>
+  )}
+
+  {(searchTerm || typeFilter || recurringFilter)&& (
+    <Button variant="outline" size="icon" onClick={handleClearFilter} title="Clear Fliter"><X className="h-4 w-5"/></Button>
+  )}
+
+
+      </div>
 
       {/* Transaction */}
       <div className="mt-5 rounded-md border-black border-2">
