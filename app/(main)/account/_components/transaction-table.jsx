@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -43,6 +43,8 @@ import { ChevronDown, ChevronUp, Clock, MoreHorizontal, RefreshCw, Search, Trash
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { useFetch } from "@/hooks/use-fetch";
+import { bulkDeleteTransactions } from "@/actions/accounts";
 
 const RECURRING_INTERVAL = {
   DAILY: "daily",
@@ -66,11 +68,11 @@ const TransactionTable = ({ transactions }) => {
   const [typeFilter, settypeFilter] = useState("");
   const [recurringFilter, setrecurringFilter] = useState("");
 
+   
   
+
   // const filteredAndSortedTransaction = transactions; 
 
-  
-  
    // Memoized filtered and sorted transactions
    const filteredAndSortedTransaction = useMemo(() => {
     let result = [...transactions];
@@ -144,11 +146,25 @@ const TransactionTable = ({ transactions }) => {
 
 
   //for filters
+  const {loading:deleteLoading,
+    fn:deleteFn,
+    data:deleted
+   } =useFetch(bulkDeleteTransactions)
 
 
-  const handleBulkDelete =()=>{
+  const handleBulkDelete =async()=>{
+    if (!window.confirm(`Are You Sure You Want To Delete ${SelectIds.length} Transactions?`)) {
+      return;
+    }
 
+    deleteFn(SelectIds);
   }
+
+  useEffect(()=>{
+    if(deleted && !deleteLoading){
+      toast.error("Transaction Deleted Succesfully")
+    }
+  })
 
   const handleClearFilter =()=>{
     setsearchTerm("");
