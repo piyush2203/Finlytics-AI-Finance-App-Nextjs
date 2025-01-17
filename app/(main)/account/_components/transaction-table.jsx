@@ -45,6 +45,8 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { useFetch } from "@/hooks/use-fetch";
 import { bulkDeleteTransactions } from "@/actions/accounts";
+import { BarLoader } from "react-spinners";
+import { toast } from "sonner";
 
 const RECURRING_INTERVAL = {
   DAILY: "daily",
@@ -164,7 +166,7 @@ const TransactionTable = ({ transactions }) => {
     if(deleted && !deleteLoading){
       toast.error("Transaction Deleted Succesfully")
     }
-  },[deleted,deleteLoading])
+  },[deleted,deleteLoading]);
 
   const handleClearFilter =()=>{
     setsearchTerm("");
@@ -175,10 +177,12 @@ const TransactionTable = ({ transactions }) => {
 
 
   return (
-    <div>
+    <div className="space-y-4">
+      {deleteLoading && <BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
       {/* Filter */}
 
       <div className="flex flex-col sm:flex-row gap-4 ">
+
         <div className="relative flex-1 ">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
           <Input className="pl-8" placeholder="Search Transactions..." value={searchTerm} onChange={(e)=>setsearchTerm(e.target.value)} />
@@ -347,7 +351,7 @@ const TransactionTable = ({ transactions }) => {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           className="text-destructive cursor-pointer"
-                          //   onClick={() => deleteFn}
+                            onClick={() => deleteFn([transaction.id])}
                         >
                           Delete
                         </DropdownMenuItem>
