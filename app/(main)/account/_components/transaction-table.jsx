@@ -164,7 +164,7 @@ const TransactionTable = ({ transactions }) => {
     if(deleted && !deleteLoading){
       toast.error("Transaction Deleted Succesfully")
     }
-  })
+  },[deleted,deleteLoading])
 
   const handleClearFilter =()=>{
     setsearchTerm("");
