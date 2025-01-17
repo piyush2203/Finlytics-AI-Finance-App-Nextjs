@@ -59,6 +59,8 @@ const RECURRING_INTERVAL = {
 
 
 const TransactionTable = ({ transactions }) => {
+
+  
   const [SelectIds, setSelectIds] = useState([]); 
   const [sortConfig, setsortConfig] = useState({
     field:"date",
